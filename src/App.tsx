@@ -4,9 +4,91 @@ import PptxGenJS from "pptxgenjs";
 const pixelsToInches = (pixels: number, dpi: number = 96): number => {
   return pixels / dpi;
 };
+function mmToPx(mm: number, dpi = 96) {
+  const inches = mm / 25.4; // Convert mm to inches
+  return Math.round(inches * dpi); // Convert inches to pixels
+}
+
+function pxToMm(px: number, dpi = 96) {
+  const inches = px / dpi; // Convert pixels to inches
+  return inches * 25.4; // Convert inches to millimeters
+}
+
+const A4Size = {
+  widthInMM: 210,
+  heightInMM: 297,
+};
+
+enum UIElementType {
+  "IMAGE",
+  "TEXT",
+  "FIGURE",
+}
+
+type UIElement =
+  | {
+      type: UIElementType.FIGURE;
+      css: {
+        x: number;
+        y: number;
+        bgColor?: string;
+        width: number;
+        height: number;
+      };
+    }
+  | {
+      type: UIElementType.TEXT;
+      css: {
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+        color?: string;
+        bgColor?: string;
+        size?: number;
+      };
+
+      content: string;
+      isEditable: boolean;
+    }
+  | {
+      type: UIElementType.IMAGE;
+      css: {
+        x: number;
+        y: number;
+        width?: number;
+        height?: number;
+      };
+      url: string;
+      isS3Image: boolean;
+    };
 
 const ResumeCanvas = () => {
   const canvasRefs = useRef<(HTMLCanvasElement | null)[]>([]);
+  const [data] = useState<UIElement[]>([
+    {
+      type: UIElementType.FIGURE,
+      css: {
+        x: 0,
+        y: 0,
+        bgColor: "#f4f4f4",
+        height: mmToPx(A4Size.heightInMM),
+        width: mmToPx(A4Size.widthInMM),
+      },
+    },
+    {
+      type: UIElementType.TEXT,
+      css: { x: 10, y: 10 },
+      content: "John Doe",
+      isEditable: false,
+    },
+    {
+      type: UIElementType.TEXT,
+      css: { x: 10, y: 10 },
+      content: "johndoe@example.com | +123 456 7890",
+      isEditable: false,
+    },
+  ]);
 
   const [resumeData] = useState([
     {
@@ -53,7 +135,22 @@ const ResumeCanvas = () => {
       }
     });
   }, [resumeData]);
+  const drawCanas2 = (canvas: HTMLCanvasElement) => {
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    data.forEach((d) => {
+      canvas.height = A4Size.heightInMM;
+      canvas.width = A4Size.widthInMM;
 
+      if (d.type == UIElementType.FIGURE) {
+        if (d.css.bgColor) ctx.fillStyle = d.css.bgColor;
+        ctx.fillRect(d.css.x, d.css.y, d.css.width, d.css.height);
+      }
+
+      if (d.type == UIElementType.TEXT) {
+      }
+    });
+  };
   const drawCanvas = (data: any, canvas: HTMLCanvasElement) => {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
@@ -117,28 +214,28 @@ const ResumeCanvas = () => {
         x: 0.5,
         y: 0.1,
         fontSize: 24,
-        bold:true,
+        bold: true,
         h: pixelsToInches(24 + 6) + 0.1,
-        color: "FFFFFF",fontFace: "Arial",
+        color: "FFFFFF",
+        fontFace: "Arial",
       });
 
       slide.addText(data.contact, {
         x: 0.5,
         y: 0.52,
         color: "FFFFFF",
-        bold:true,
+        bold: true,
         h: pixelsToInches(14 + 6),
-        fontSize: 14,fontFace: "Arial",
+        fontSize: 14,
+        fontFace: "Arial",
       });
-
-
 
       let yOffset = 1.5;
 
       slide.addText("Experience", {
         x: 0.5,
         y: yOffset,
-        h:pixelsToInches(18 + 6),
+        h: pixelsToInches(18 + 6),
         fontSize: 18,
         bold: true,
         fontFace: "Arial",
@@ -151,7 +248,7 @@ const ResumeCanvas = () => {
           x: 0.5,
           y: yOffset,
           fontSize: 16,
-          h:pixelsToInches(6 + 16),
+          h: pixelsToInches(6 + 16),
 
           bold: true,
           fontFace: "Arial",
@@ -162,7 +259,7 @@ const ResumeCanvas = () => {
           slide.addText("• " + detail, {
             x: 0.7,
             y: yOffset,
-            h:pixelsToInches(6 + 14),
+            h: pixelsToInches(6 + 14),
 
             fontSize: 14,
             fontFace: "Arial",
@@ -179,8 +276,8 @@ const ResumeCanvas = () => {
         fontSize: 18,
         bold: true,
         fontFace: "Arial",
-        color: "000000",          h:pixelsToInches(6 + 18),
-
+        color: "000000",
+        h: pixelsToInches(6 + 18),
       });
 
       yOffset += 0.3;
@@ -189,8 +286,8 @@ const ResumeCanvas = () => {
         y: yOffset,
         fontSize: 14,
         fontFace: "Arial",
-        color: "000000",          h:pixelsToInches(6 + 14),
-
+        color: "000000",
+        h: pixelsToInches(6 + 14),
       });
 
       slide.addImage({
