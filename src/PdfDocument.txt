@@ -1,0 +1,87 @@
+import React from "react";
+import { Document, Page, Text, View, StyleSheet, PDFViewer, Image } from "@react-pdf/renderer";
+
+// Sample image URL
+const sampleImage = "https://source.unsplash.com/600x400/?nature";
+
+// Styles for the document
+const styles = StyleSheet.create({
+  page: {
+    flexDirection: "column",
+    padding: 20,
+  },
+  section: {
+    marginBottom: 10,
+    padding: 10,
+    borderBottom: "1 solid #ddd",
+  },
+  header: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  text: {
+    fontSize: 12,
+    marginBottom: 5,
+  },
+  image: {
+    width: 300,
+    height: 200,
+    marginVertical: 10,
+  },
+  footer: {
+    position: "absolute",
+    bottom: 20,
+    left: 0,
+    right: 0,
+    textAlign: "center",
+    fontSize: 10,
+    color: "gray",
+  },
+});
+
+// PDF document component
+export const PdfDocument = () => (
+  <PDFViewer style={{ width: "100%", height: "100vh" }}>
+    <Document>
+      <Page size="A4" style={styles.page}>
+        {/* Header Section */}
+        <View style={styles.section}>
+          <Text style={styles.header}>Sample PDF Report</Text>
+          <Text style={styles.text}>Generated using react-pdf/renderer</Text>
+        </View>
+
+        {/* Content Section */}
+        <View style={styles.section}>
+          <Text style={styles.header}>Introduction</Text>
+          <Text style={styles.text}>
+            This is a sample document demonstrating text and graphical content in a PDF
+            generated using React.
+          </Text>
+        </View>
+
+        {/* Image Section */}
+        <View style={styles.section}>
+          <Text style={styles.header}>Image Example</Text>
+          <Image src={sampleImage} style={styles.image} />
+          <Text style={styles.text}>An example image included in the document.</Text>
+        </View>
+
+        {/* Paragraph Section */}
+        <View style={styles.section}>
+          <Text style={styles.header}>Detailed Content</Text>
+          <Text style={styles.text}>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nisl
+            eget convallis feugiat, justo urna interdum augue, non fringilla libero enim
+            et purus. Fusce luctus nibh vel dui malesuada, non fringilla massa mollis.
+            Suspendisse volutpat orci id turpis scelerisque, a vulputate arcu dictum.
+          </Text>
+        </View>
+
+        {/* Footer */}
+        <Text style={styles.footer}>Page 1 - Sample Report</Text>
+      </Page>
+    </Document>
+  </PDFViewer>
+);
+ 

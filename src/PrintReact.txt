@@ -1,0 +1,45 @@
+import React, { useRef } from "react";
+import { useReactToPrint } from "react-to-print";
+
+// Ensure forwardRef is used
+const PrintableComponent = React.forwardRef((props, ref) => (
+  <div
+    ref={ref}
+    style={{ padding: "20px", border: "1px solid black", background: "#fff" }}
+  >
+    <h2>React Component to PDF</h2>
+    <p>This is a test print.</p>
+  </div>
+));
+
+const ExportToPdf = () => {
+  const componentRef = useRef(null);
+
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+    documentTitle: "ReactComponent",
+  });
+
+  return (
+    <div>
+      {/* The ref is being passed to PrintableComponent */}
+      <PrintableComponent ref={componentRef} />
+
+      {/* Print button */}
+      <button
+        onClick={handlePrint}
+        style={{
+          marginTop: "10px",
+          padding: "10px",
+          background: "blue",
+          color: "white",
+          borderRadius: "5px",
+        }}
+      >
+        Download as PDF
+      </button>
+    </div>
+  );
+};
+
+export default ExportToPdf;
